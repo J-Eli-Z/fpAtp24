@@ -1,0 +1,18 @@
+1. struct playlist (doubly circular linked list) --> needs name data
+2. struct songs (struct data)
+3. fitur node: previous, next
+4. function: add remove, first/beginning, and by index (string songName)
+5. each song info: songTitle, artist, lyricist, composer, album, genre, published, duration, prev and next node
+6. sorting algorithm, by songTitle, artist, and time (ascending & descending)
+7. output: print songs in playlist, and current playing song
+
+
+song
+genre
+singer
+lyricist
+composer
+album
+published
+duration
+
