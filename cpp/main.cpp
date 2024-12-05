@@ -27,24 +27,46 @@ struct playlist
     playlist* next;
 };
 
-void printPlaylist(playlist *head)
+// function to print out the amount of playlist there is --> Fika
+void printPlaylist(playlist** head)
 {
-    // check if there's any playlist or not
-    if (head) cout << "There isn\'t any playlist yet";
-
-    // traverse through the list and print names
-    int loop = 0;
-    while (head->next)
+   if (!head)
+   {
+        cout << "There isn\'t any playlist added yet.\n";
+        return;
+    }   
+    
+    cout << "Playlist:\n";
+    int index = 0;
+    while (head) 
     {
-        cout << loop << ". " << head->name << endl;
-        loop++;
+        cout << index++ << ". " << head->name << endl;
+        head = head->next;
+    }
+
+}
+
+// function to print out the songs listed in a playlist --> added by Fika
+void printSongs(playlist** head)
+{
+    cout << "Which playlist?" << endl; 
+
+    
+    if (!head){
+        cout << "No songs listed in the playlist yet.";
+        return;
+    }
+
+    cout<< "Lagu di playlist:\n";
+    int index = 0;
+    while(head){
+        cout << index++ << ". "<<head->song<<"\n"
+        <<" by " << head->artist
+        <<" (" <<head->year<<")\n";
+        head=head->next;
     }
 }
 
-void printSongs(songs *head)
-{
-    
-}
 
 void insertEndPlaylist (playlist **head)
 {
@@ -73,7 +95,7 @@ void deletePlaylistIndex (playlist **head)
     if (*head) cout << "There isn\'t any playlist yet" << endl;
 
     // get which playlist to be deleted
-    cout << "Which playlist is to be deleted?"
+    cout << "Which playlist is to be deleted?";
 }
 
 void insertEndSongs (songs **head)
@@ -115,9 +137,19 @@ void deleteSongIndex(songs **head)
         return;
     }
 
-    cout << "Choose what song to delete"
+    cout << "Choose what song to delete";
 }
 //create playlist
+
+void createPlaylist(songs **head){
+    if(*head)
+    {
+        cout << "there's no song to add yet \n";
+        return;
+    }
+
+    cout <<"Choose songs to add: \n";
+}
 
 //create song
 
