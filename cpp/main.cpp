@@ -23,51 +23,94 @@ struct songs
 struct playlist
 {
     string name; 
-    songs* head; 
+    songs* songList = nullptr; 
     playlist* next;
 };
 
 // function to print out the amount of playlist there is --> Fika
 void printPlaylist(playlist** head)
 {
-   if (!head)
-   {
-        cout << "There isn\'t any playlist added yet.\n";
-        return;
-    }   
-    
-    cout << "Playlist:\n";
-    int index = 0;
-    while (head) 
+    // check if there's any playlist listed
+    if (!*head)
     {
-        cout << index++ << ". " << head->name << endl;
-        head = head->next;
+        cout << "There isn\'t any playlist added yet.\n"; 
+        return;
     }
 
+    // listing out all of the playlist listed
+    cout << "List of playlists:\n";
+    int index = 0;
+    playlist *temp = *head;
+    while (temp) 
+    {
+        cout << index++ << ". " << temp->name << endl;
+        temp = temp->next;
+    }
+
+    cout << endl; 
 }
+
+/* 
+*head = NULL; 
+
+&head --> means &(*head) = **head --> memory address of a pointer variable 
+
+dereference the memory address of a pointer variable
+
+so memory address of the memory address of a pointer variable --> doesn't that mean i could just pass the inital value? like just head :v
+*/
 
 // function to print out the songs listed in a playlist --> added by Fika
 void printSongs(playlist** head)
 {
-    cout << "Which playlist?" << endl; 
-
-    
-    if (!head){
-        cout << "No songs listed in the playlist yet.";
+    // check if there's any listed playlist 
+    if (!*head)
+    {
+        cout << "There isn\'t any playlist added yet.\n"; 
         return;
     }
 
-    cout<< "Lagu di playlist:\n";
-    int index = 0;
-    while(head){
-        cout << index++ << ". "<<head->song<<"\n"
-        <<" by " << head->artist
-        <<" (" <<head->year<<")\n";
-        head=head->next;
+    // asking which playlist is it
+    printPlaylist(head);
+    cout << "Choose a number: ";
+    unsigned int num; cin >> num;  
+
+    // find the indexed playlist name by traversing through the listed playlists
+    int pos = 0; 
+    playlist *temp = *head;
+    while (temp && pos != (num - 1))
+    {
+        temp = temp->next; 
+        pos++;
     }
+
+    // check if the index is over the list's quantity
+    if (!temp)
+    {
+        cout << "Number is bigger than the amount of listed playlist" << endl;
+        return;
+    }
+
+    // check if there's any songs inside the playlist
+    if (!temp->songList)
+    {
+        cout << "There isn\'t any songs added in this playlist yet.\n";
+        return;
+    }
+
+    // print out the list of songs in playlist
+    cout << endl << temp->name << ":" << endl;
+    pos = 0;
+    while(temp->songList)
+    {
+        cout << pos++ << ". " << temp->songList->song << " by " << temp->songList->artist << endl;
+        temp = temp->next;
+    }
+
+    cout << endl;
 }
 
-
+// function to insert a playlist to the end of the playlist
 void insertEndPlaylist (playlist **head)
 {
     // declaring new node of playlist
@@ -77,29 +120,85 @@ void insertEndPlaylist (playlist **head)
     cout << "Enter playlist name:"; 
     cin >> newPlaylist->name;
 
-    // allocatin playlist's memory
+    // allocating playlist's memory
     newPlaylist->next = nullptr;
     
     // checking if there's any playlist beforehand
-    if (*head) *head = newPlaylist;
-    else
+    if (!*head) *head = newPlaylist;
+    
+    // traversing to the end of the playlist's list
+    playlist *temp = *head; 
+    while (temp->next)
     {
-        playlist* temp = *head; 
-        temp->next = newPlaylist;
+        temp = temp->next; 
     }
+    
+    // insert the newPlaylist's memory into the next node of temp
+    temp->next = newPlaylist;
 }
 
+// function to delete a playlist from the list by index
 void deletePlaylistIndex (playlist **head)
 {
     // check if there any playlist beforehand
-    if (*head) cout << "There isn\'t any playlist yet" << endl;
+    if (!*head) cout << "There isn\'t any playlist added yet" << endl;
 
     // get which playlist to be deleted
-    cout << "Which playlist is to be deleted?";
+    printPlaylist(head);
+    cout << "Choose a number: ";
+    unsigned int num; cin >> num; 
+
+    // traverse to the indexed list
+    int pos = 0;
+    playlist * temp = *head; 
+    while (temp && pos != (num - 2))
+    {
+        temp = temp->next; 
+        pos++;
+    }
+
+    // check if the index is over the list's quantity
+    if (!temp || !temp->next)
+    {
+        cout << "Number is bigger than the amount of listed playlist" << endl;
+        return; 
+    }
+
+    playlist * next = temp->next->next;
+    delete temp->next;
+    temp->next = next;
 }
 
-void insertEndSongs (songs **head)
+void insertEndSongs (playlist **head)
 {
+    // check if there's any listed playlist beforehand
+    if (!*head) 
+    {
+        cout << "There isn\'t any playlist added yet" << endl;
+        return;
+    }
+
+    // get which playlist to be inserted with a new song
+    printPlaylist(head);
+    cout << "Choose a number: "; 
+    unsigned int num; cin >> num;
+
+    // find the indexed playlist name by traversing through the listed playlists
+    int pos = 0; 
+    playlist *temp = *head;
+    while (temp && pos != (num - 1))
+    {
+        temp = temp->next; 
+        pos++;
+    }
+    
+    // check if the index is over the list's quantity
+    if (!temp)
+    {
+        cout << "Number is bigger than the amount of listed playlist" << endl;
+        return;
+    }
+
     // declaring new node of songs
     songs* newSong = new songs;
 
@@ -118,17 +217,17 @@ void insertEndSongs (songs **head)
     newSong->prev = nullptr;
 
     // check if there's any previous head or not
-    if (*head) *head = newSong; 
+    if (!temp->songList) temp->songList = newSong; 
     else
     {
-        songs *temp = *head; 
-        while (temp->next) temp = temp->next;
-        temp->next = newSong;
-        newSong->prev = temp;
+        songs *sings = temp->songList; 
+        // traverse 'till the end of the playlist
+        while (sings->next) sings = sings->next;
+        sings->next = newSong;
     }
 }
 
-void deleteSongIndex(songs **head)
+void deleteSongIndex(playlist **head)
 {
     // check if there's any listed song beforehand
     if (*head)
@@ -137,22 +236,39 @@ void deleteSongIndex(songs **head)
         return;
     }
 
-    cout << "Choose what song to delete";
-}
-//create playlist
+    printSongs(head);
+    cout << "Choose a number: "; 
+    unsigned int num; cin >> num;
 
-void createPlaylist(songs **head){
-    if(*head)
+    // find the indexed playlist name by traversing through the listed playlists
+    int pos = 0; 
+    playlist *temp = *head;
+    while (temp && pos != (num - 1))
     {
-        cout << "there's no song to add yet \n";
-        return;
+        temp = temp->next; 
+        pos++;
+    }
+    
+    // check if the index is over the list's quantity
+    if (!temp)
+    {
+        cout << "Number is bigger than the amount of listed playlist" << endl;
+        return; 
     }
 
-    cout <<"Choose songs to add: \n";
+    // check if there's any songs in the playlist
+    if (!temp->songList)
+    {
+        cout << "There isn\'t any songs added in this playlist yet.\n";
+        return;
+    }
+    
+
+    playlist * next = temp->next->next;
+    delete temp->next;
+    temp->next = next;
 }
 
-//create song
-
 int main (){
-
+    playlist* null
 }
