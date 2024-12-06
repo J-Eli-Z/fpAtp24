@@ -63,13 +63,6 @@ so memory address of the memory address of a pointer variable --> doesn't that m
 // function to print out the songs listed in a playlist --> added by Fika
 void printSongs(playlist** head)
 {
-    // check if there's any listed playlist 
-    if (!*head)
-    {
-        cout << "There isn\'t any playlist added yet.\n"; 
-        return;
-    }
-
     // asking which playlist is it
     printPlaylist(head);
     cout << "Choose a number: ";
@@ -101,10 +94,11 @@ void printSongs(playlist** head)
     // print out the list of songs in playlist
     cout << endl << temp->name << ":" << endl;
     pos = 0;
-    while(temp->songList)
+    songs* now = temp->songList;
+    while(now)
     {
-        cout << pos++ << ". " << temp->songList->song << " by " << temp->songList->artist << endl;
-        temp = temp->next;
+        cout << pos++ << ". " << now->song << " by " << now->artist << endl;
+        now = now->next;
     }
 
     cout << endl;
@@ -140,9 +134,6 @@ void insertEndPlaylist (playlist **head)
 // function to delete a playlist from the list by index
 void deletePlaylistIndex (playlist **head)
 {
-    // check if there any playlist beforehand
-    if (!*head) cout << "There isn\'t any playlist added yet" << endl;
-
     // get which playlist to be deleted
     printPlaylist(head);
     cout << "Choose a number: ";
@@ -171,13 +162,6 @@ void deletePlaylistIndex (playlist **head)
 
 void insertEndSongs (playlist **head)
 {
-    // check if there's any listed playlist beforehand
-    if (!*head) 
-    {
-        cout << "There isn\'t any playlist added yet" << endl;
-        return;
-    }
-
     // get which playlist to be inserted with a new song
     printPlaylist(head);
     cout << "Choose a number: "; 
@@ -229,21 +213,19 @@ void insertEndSongs (playlist **head)
 
 void deleteSongIndex(playlist **head)
 {
-    // check if there's any listed song beforehand
-    if (*head)
-    {
-        cout << "Playlist doesn\'t contain any songs yet.";
-        return;
-    }
-
+    // get the index of a song
     printSongs(head);
     cout << "Choose a number: "; 
     unsigned int num; cin >> num;
 
-    // find the indexed playlist name by traversing through the listed playlists
-    int pos = 0; 
+    // declaration of the now variable which is of songs struct6
+    .
     playlist *temp = *head;
-    while (temp && pos != (num - 1))
+    songs* now = temp->songList;
+
+    // find the indexed song name by traversing through the listed playlists
+    int pos = 0; 
+    while (now && pos != (num - 2))
     {
         temp = temp->next; 
         pos++;
@@ -252,17 +234,14 @@ void deleteSongIndex(playlist **head)
     // check if the index is over the list's quantity
     if (!temp)
     {
-        cout << "Number is bigger than the amount of listed playlist" << endl;
+        cout << "Number is bigger than the amount of listed songs" << endl;
         return; 
     }
 
-    // check if there's any songs in the playlist
-    if (!temp->songList)
-    {
-        cout << "There isn\'t any songs added in this playlist yet.\n";
-        return;
-    }
     
+    // traversing the end of the playlist
+    while (now->next) now = now->next;
+    now->next = 
 
     playlist * next = temp->next->next;
     delete temp->next;
