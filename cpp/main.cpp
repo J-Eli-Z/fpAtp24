@@ -63,6 +63,13 @@ so memory address of the memory address of a pointer variable --> doesn't that m
 // function to print out the songs listed in a playlist --> added by Fika
 void printSongs(playlist** head)
 {
+    // check if there's any playlist listed
+    if (!*head)
+    {
+        cout << "There isn\'t any playlist added yet.\n"; 
+        return;
+    }
+
     // asking which playlist is it
     printPlaylist(head);
     cout << "Choose a number: ";
@@ -134,6 +141,13 @@ void insertEndPlaylist (playlist **head)
 // function to delete a playlist from the list by index
 void deletePlaylistIndex (playlist **head)
 {
+    // check if there's any playlist listed
+    if (!*head)
+    {
+        cout << "There isn\'t any playlist added yet.\n"; 
+        return;
+    }
+    
     // get which playlist to be deleted
     printPlaylist(head);
     cout << "Choose a number: ";
@@ -162,6 +176,13 @@ void deletePlaylistIndex (playlist **head)
 
 void insertEndSongs (playlist **head)
 {
+    // check if there's any playlist listed
+    if (!*head)
+    {
+        cout << "There isn\'t any playlist added yet.\n"; 
+        return;
+    }
+    
     // get which playlist to be inserted with a new song
     printPlaylist(head);
     cout << "Choose a number: "; 
@@ -213,13 +234,19 @@ void insertEndSongs (playlist **head)
 
 void deleteSongIndex(playlist **head)
 {
+    // check if there's any playlist listed
+    if (!*head)
+    {
+        cout << "There isn\'t any playlist added yet.\n"; 
+        return;
+    }
+    
     // get the index of a song
     printSongs(head);
     cout << "Choose a number: "; 
     unsigned int num; cin >> num;
 
     // declaration of the now variable which is of songs struct6
-    .
     playlist *temp = *head;
     songs* now = temp->songList;
 
@@ -227,27 +254,70 @@ void deleteSongIndex(playlist **head)
     int pos = 0; 
     while (now && pos != (num - 2))
     {
-        temp = temp->next; 
+        now = now->next; 
         pos++;
     }
     
     // check if the index is over the list's quantity
-    if (!temp)
+    if (!now)
     {
         cout << "Number is bigger than the amount of listed songs" << endl;
         return; 
     }
 
-    
-    // traversing the end of the playlist
-    while (now->next) now = now->next;
-    now->next = 
-
-    playlist * next = temp->next->next;
-    delete temp->next;
-    temp->next = next;
+    // deleting the indexed song's memory
+    songs *next = now->next->next;
+    delete now->next;
+    now->next = next;
 }
 
 int main (){
-    playlist* null
+    playlist* head = nullptr; 
+    int choose;
+    
+    do 
+    {
+        cout << "-----------------------" << endl;
+        cout << ">-WELCOME TO SPOTIBRO-<" << endl;
+        cout << "-----------------------" << endl;
+        cout << "Choose what action you wanna do:" << endl;
+        cout << "1. Add Playlist" << endl;
+        cout << "2. Add Song in a Playlist" << endl;
+        cout << "3. Delete Playlist" << endl;
+        cout << "4. Delete Song in a Playlist" << endl;
+        cout << "5. Print out all the Playlist" << endl;
+        cout << "6. Print out all the songs in a Playlist" << endl;
+        cin >> choose;
+        switch (choose)
+        {
+            case 1:
+                insertEndPlaylist(&head);
+                break;
+
+            case 2: 
+                insertEndSongs(&head);
+                break;
+            
+            case 3:
+                deletePlaylistIndex(&head);
+                break;
+            
+            case 4:
+                deleteSongIndex(&head);
+                break;
+            
+            case 5:
+                printPlaylist(&head);
+                break;
+            
+            case 6:
+                printSongs(&head);
+                break;
+            
+            default:
+                cout << "Please choose again" << endl;
+                break;
+        }
+    }
+    while (choose != 9);
 }
