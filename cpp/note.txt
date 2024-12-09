@@ -1,0 +1,35 @@
+insertEndPlaylist:
+1. hai
+hai --> newPlaylist->name
+newPlaylist->next = null
+curr head = null
+then, curr head = newPlaylist = hai
+
+
+2. kenapa
+kenapa --> newPlaylist->name
+newPlaylist-> = null
+curr head != null
+then, curr head 
+
+linked Playlist
+1. hai
+2. kena 
+3. halo 
+
+input = 5 = num
+
+pos = 0
+
+pos = 2 
+temp = halo
+
+pos = 3
+temp = null 
+
+num = 4
+pos = 2
+temp = halo
+
+pos = 3
+
