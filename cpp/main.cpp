@@ -33,17 +33,17 @@ void printPlaylist(playlist** head)
     // check if there's any playlist listed
     if (!*head)
     {
-        cout << "There isn\'t any playlist added yet.\n"; 
+        cout << endl << "There isn\'t any playlist added yet.\n"; 
         return;
     }
 
     // listing out all of the playlist listed
-    cout << "List of playlists:\n";
+    cout << endl << "List of playlists:\n";
     int index = 0;
     playlist *temp = *head;
     while (temp) 
     {
-        cout << index++ << ". " << temp->name << endl;
+        cout << ++index << ". " << temp->name << endl;
         temp = temp->next;
     }
 
@@ -66,7 +66,7 @@ void printSongs(playlist** head)
     // check if there's any playlist listed
     if (!*head)
     {
-        cout << "There isn\'t any playlist added yet.\n"; 
+        cout << endl << "There isn\'t any playlist added yet.\n"; 
         return;
     }
 
@@ -104,7 +104,7 @@ void printSongs(playlist** head)
     songs* now = temp->songList;
     while(now)
     {
-        cout << pos++ << ". " << now->song << " by " << now->artist << endl;
+        cout << ++pos << ". " << now->song << " by " << now->artist << endl;
         now = now->next;
     }
 
@@ -118,21 +118,22 @@ void insertEndPlaylist (playlist **head)
     playlist* newPlaylist = new playlist;
 
     // input name of a playlist
-    cout << "Enter playlist name:"; 
+    cout << endl << "Enter playlist name:"; 
     cin >> newPlaylist->name;
 
     // allocating playlist's memory
     newPlaylist->next = nullptr;
     
     // checking if there's any playlist beforehand
-    if (!*head) *head = newPlaylist;
+    if (!*head)
+    {
+        *head = newPlaylist;
+        return;
+    } 
     
     // traversing to the end of the playlist's list
     playlist *temp = *head; 
-    while (temp->next)
-    {
-        temp = temp->next; 
-    }
+    while (temp->next) temp = temp->next; 
     
     // insert the newPlaylist's memory into the next node of temp
     temp->next = newPlaylist;
@@ -204,8 +205,8 @@ void insertEndSongs (playlist **head)
         return;
     }
 
-    // declaring new node of songs
-    songs* newSong = new songs;
+   // declaring new node of songs
+   songs* newSong = new songs;
 
     // input data of a song's node
     cout << "Enter song name:";                 cin >> newSong->song; 
@@ -222,7 +223,11 @@ void insertEndSongs (playlist **head)
     newSong->prev = nullptr;
 
     // check if there's any previous head or not
-    if (!temp->songList) temp->songList = newSong; 
+    if (!temp->songList) 
+    {
+        temp->songList = newSong; 
+        return;
+    }
     else
     {
         songs *sings = temp->songList; 
