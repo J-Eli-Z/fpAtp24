@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <filesystem>
+
 using namespace std;
 
 struct songs 
@@ -199,6 +201,49 @@ void WriteFile(const string& playlistdir, const string& filename, const songs* n
     }
 }
 
+void LoadFile(playlist **head) {
+    for (const auto& entry : filesystem::directory_iterator(playlistdir)) {
+        if (entry.is_regular_file() && entry.path().extension() == ".txt") {
+            playlist* newPlaylist = new playlist;
+            newPlaylist->name = entry.path().stem(); //load playlist data from file name without extention
+            newPlaylist->songList = nullptr; 
+            newPlaylist->next = *head;
+            *head = newPlaylist;
+
+            //load songs data from the txt file
+            ifstream file(entry.path());
+            if (file.is_open()) {
+                string line;
+                songs* lastSong = nullptr;
+
+                while (getline(file, line)) {
+                    if (line.find("Song Name:") == 0) {
+                        songs* newSong = new songs;
+                        newSong->song = line.substr(11); // load songs title after "song name:""
+                        getline(file, line); newSong->artist = line.substr(8); 
+                        getline(file, line); newSong->lyricist = line.substr(10);
+                        getline(file, line); newSong->album = line.substr(7);
+                        getline(file, line); newSong->composer = line.substr(9);
+                        getline(file, line); newSong->genre = line.substr(7);
+                        getline(file, line); newSong->year = stoi(line.substr(6)); 
+                        getline(file, line); newSong->duration = stoi(line.substr(10)); 
+
+                        newSong->next = nullptr;
+                        newSong->prev = lastSong;
+
+                        if (!newPlaylist->songList) newPlaylist->songList = newSong;
+                        else lastSong->next = newSong;
+
+                        lastSong = newSong;
+                    }
+                }
+                file.close();
+            }
+        }
+    }
+}
+
+
 void insertEndSongs (playlist **head)
 {
     // check if there's any playlist listed
@@ -268,6 +313,8 @@ void insertEndSongs (playlist **head)
 
 }
 
+
+
 void deleteSongIndex(playlist **head)
 {
     // check if there's any playlist listed
@@ -311,6 +358,7 @@ void deleteSongIndex(playlist **head)
 
 int main (){
     playlist* head = nullptr; 
+    LoadFile(&head);
     int choose;
     
     do 
