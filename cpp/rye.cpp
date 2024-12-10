@@ -201,16 +201,36 @@ void WriteFile(const string& playlistdir, const string& filename, const songs* n
     }
 }
 
-void LoadFile(playlist **head) {
-    for (const auto& entry : filesystem::directory_iterator(playlistdir)) {
+void LoadFile(playlist** head) {
+    //check if the directory exist or not if it is not then it will create directory
+    if (!std::filesystem::exists(playlistdir)) {
+        std::filesystem::create_directory(playlistdir);
+    }
+
+    for (const auto& entry : std::filesystem::directory_iterator(playlistdir)) {
         if (entry.is_regular_file() && entry.path().extension() == ".txt") {
             playlist* newPlaylist = new playlist;
-            newPlaylist->name = entry.path().stem(); //load playlist data from file name without extention
-            newPlaylist->songList = nullptr; 
+            newPlaylist->name = entry.path().stem().string(); //get the filename without .txt
+            newPlaylist->songList = nullptr;
+            newPlaylist->next = nullptr;
+
+            // check for duplicate playlists
+            playlist* temp = *head;
+            while (temp) {
+                if (temp->name == newPlaylist->name) {
+                    delete newPlaylist; // avoid duplicate playlists
+                    newPlaylist = nullptr;
+                    break;
+                }
+                temp = temp->next;
+            }
+            if (!newPlaylist) continue;
+
+            // insert new playlist at the head
             newPlaylist->next = *head;
             *head = newPlaylist;
 
-            //load songs data from the txt file
+            // load songs from file
             ifstream file(entry.path());
             if (file.is_open()) {
                 string line;
@@ -219,25 +239,38 @@ void LoadFile(playlist **head) {
                 while (getline(file, line)) {
                     if (line.find("Song Name:") == 0) {
                         songs* newSong = new songs;
-                        newSong->song = line.substr(11); // load songs title after "song name:""
+                        newSong->song = line.substr(11); // find the song name after song name:
+
+                        //load songs data
                         getline(file, line); newSong->artist = line.substr(8); 
                         getline(file, line); newSong->lyricist = line.substr(10);
                         getline(file, line); newSong->album = line.substr(7);
                         getline(file, line); newSong->composer = line.substr(9);
                         getline(file, line); newSong->genre = line.substr(7);
-                        getline(file, line); newSong->year = stoi(line.substr(6)); 
-                        getline(file, line); newSong->duration = stoi(line.substr(10)); 
 
+                        try {
+                            getline(file, line); newSong->year = stoi(line.substr(6));
+                            getline(file, line); newSong->duration = stoi(line.substr(10));
+                        } catch (const std::exception& e) {
+                            cout << "Error parsing song attributes in file: " << entry.path() << "\n";
+                            delete newSong; 
+                            continue;
+                        }
+
+                        // insert songs into playlist
                         newSong->next = nullptr;
                         newSong->prev = lastSong;
-
-                        if (!newPlaylist->songList) newPlaylist->songList = newSong;
-                        else lastSong->next = newSong;
-
+                        if (!newPlaylist->songList) {
+                            newPlaylist->songList = newSong;
+                        } else {
+                            lastSong->next = newSong;
+                        }
                         lastSong = newSong;
                     }
                 }
                 file.close();
+            } else {
+                cout << "Error opening file " << entry.path() << "\n";
             }
         }
     }
