@@ -124,7 +124,7 @@ void insertEndPlaylist (playlist **head)
 
     // input name of a playlist
     cout << endl << "Enter playlist name:"; 
-    cin >> newPlaylist->name;
+    getline(cin, newPlaylist->name);
 
     // allocating playlist's memory
     newPlaylist->next = nullptr;
@@ -290,6 +290,7 @@ void insertEndSongs (playlist **head)
     printPlaylist(head);
     cout << "Choose a number: "; 
     unsigned int num; cin >> num;
+    cin.ignore();
 
     // find the indexed playlist name by traversing through the listed playlists
     int pos = 0; 
@@ -315,14 +316,24 @@ void insertEndSongs (playlist **head)
 
 
     // input data of a song's node
-    cout << "Enter song name:";                 cin >> newSong->song; 
-    cout << "Enter artist\'s name:";            cin >> newSong->artist;
-    cout << "Enter lyricist\'s name:";          cin >> newSong->lyricist;
-    cout << "Enter album\'s name:";             cin >> newSong->album;
-    cout << "Enter composer\'s name:";          cin >> newSong->composer;
-    cout << "Enter genre\'s name:";             cin >> newSong->genre;
-    cout << "Enter songs\'s year of release:";  cin >> newSong->year;
-    cout << "Enter song\'s duration:";          cin >> newSong->duration;
+    cout << "Enter song name:";                 getline(cin, newSong->song); 
+    cout << "Enter artist\'s name:";            getline (cin, newSong->artist);
+    cout << "Enter lyricist\'s name:";          getline(cin, newSong->lyricist);
+    cout << "Enter album\'s name:";             getline (cin, newSong->album);
+    cout << "Enter composer\'s name:";          getline(cin, newSong->composer);
+    cout << "Enter genre\'s name:";             getline(cin, newSong->genre);
+
+    cout << "Enter songs\'s year of release:";  while(!(cin >> newSong->year)) {
+        cout << "Invalid input. Please enter an integer: ";
+        cin.clear(); 
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }; 
+    
+    cout << "Enter song\'s duration:";          while(!(cin >> newSong->duration)){
+        cout << "Invalid input. Please enter an integer: ";
+        cin.clear(); 
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }; 
 
     // allocate song's list memory
     newSong->next = nullptr;
@@ -393,7 +404,7 @@ int main (){
     playlist* head = nullptr; 
     LoadFile(&head);
     int choose;
-    
+
     do 
     {
         cout << "-----------------------" << endl;
@@ -407,6 +418,7 @@ int main (){
         cout << "5. Print out all the Playlist" << endl;
         cout << "6. Print out all the songs in a Playlist" << endl;
         cin >> choose;
+        cin.ignore();
         switch (choose)
         {
             case 1:
